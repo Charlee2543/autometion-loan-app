@@ -1,7 +1,8 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { dataLoan } from "@/types/dataTypes";
 import axios, { AxiosResponse } from "axios";
+import liff from "@line/liff";
 
 export default function Page() {
    // const [field0, setField0] = useState<string>("");
@@ -24,7 +25,8 @@ export default function Page() {
    // };
 
    const urlSubmit = process.env.NEXT_PUBLIC_N8N_URL_SUBMIT_LOAN_FORM;
-
+   // const [nameUser, setNameUser] = useState<string>("");
+   // const [idUser, setIdUser] = useState<string>("");
    const [loanData, setLoanData] = useState<dataLoan>({
       fullName: "",
       phoneNumbder: undefined,
@@ -32,6 +34,8 @@ export default function Page() {
       district: "",
       Province: "",
       price: undefined,
+      lineName: "",
+      idUser: "",
    });
    // Promise<AxiosResponse<Response>>
    const submitloanData = async (objectData: dataLoan): Promise<void> => {
@@ -53,6 +57,47 @@ export default function Page() {
       await submitloanData(loanData);
    };
 
+   // const lineLogin = async () => {
+   //    await liff.init({
+   //       liffId: `${process.env.NEXT_PUBLIC_LIFF_ID}`,
+   //    });
+   //    if (!liff.isLoggedIn()) {
+   //       liff.login();
+   //       return false;
+   //    }
+   //    const profile = await liff.getProfile();
+   //    setProfileUser(profile);
+   //    console.log(`login line แล้วนะ` + liff.isLoggedIn());
+   // };
+
+   useEffect(() => {
+      const lineLogin = async () => {
+         await liff.init({
+            liffId: `${process.env.NEXT_PUBLIC_LIFF_ID}`,
+         });
+         if (!liff.isLoggedIn()) {
+            liff.login();
+            return false;
+         }
+         const responseProfile = await liff.getProfile();
+         console.log("profile: ", responseProfile);
+         if (responseProfile) {
+            setLoanData((prevData) => ({
+               ...prevData,
+               lineName: responseProfile.displayName,
+            }));
+            setLoanData((prevData) => ({
+               ...prevData,
+               idUser: responseProfile.userId,
+            }));
+         }
+         console.log(`login line แล้วนะ` + liff.isLoggedIn());
+      };
+
+      lineLogin();
+   }, []);
+   // lineLogin();
+
    return (
       <div className=" w-full h-full  bg-(--color-background) flex justify-center m-4">
          <section className="box-content p-6 w-full max-w-[400px]  rounded-(--border-radius-card) bg-(--color-card-bg) border-2 border-(--color-input-border) shadow-2xl ">
@@ -66,12 +111,8 @@ export default function Page() {
             >
                <div className="form-header">
                   <h1>คำขอสินเชื่อ (Loan Application)</h1>
-                  <p
-                  // style={"white-space: pre-line"}
-                  >
-                     {" "}
-                  </p>
                </div>
+               <p className="text-stone-800">Line Nmae : {loanData.lineName}</p>
 
                <div className="inputs-wrapper w-full ">
                   <div className="form-group ">

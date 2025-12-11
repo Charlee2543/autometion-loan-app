@@ -5,4 +5,6 @@ export interface dataLoan {
    district: string;
    Province: string;
    price: number | undefined;
+   lineName: string;
+   idUser: string;
 }
