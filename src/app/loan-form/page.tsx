@@ -29,11 +29,11 @@ export default function Page() {
    // const [idUser, setIdUser] = useState<string>("");
    const [loanData, setLoanData] = useState<dataLoan>({
       fullName: "",
-      phoneNumbder: undefined,
+      phoneNumbder: 0,
       titleDeedNo: "",
       district: "",
       Province: "",
-      price: undefined,
+      price: 0,
       lineName: "",
       idUser: "",
    });
